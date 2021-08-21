@@ -2,8 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {Provider} from 'react-redux';
-import {createStore} from 'redux';
-import {searchRobots} from './reducers';
+import {createStore, applyMiddleware,combineReducers} from 'redux';
+import  {createLogger} from 'redux-logger';
+import thunkMiddleware  from 'redux-thunk';
+
+
+import {searchRobots, reuestRobots} from './reducers';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
 //import Hello from './Hello'; 
@@ -14,9 +18,22 @@ import reportWebVitals from './reportWebVitals';
 import App from './containers/App';
 
 // create the redux store
-const store = createStore(searchRobots);
+// we use middleware 
+// create a logger and apply it
+// logger present all informations  to learn what it happened
+const logger = createLogger();
+// we can apply thunkmiddleware too , to handle asynchronous action
 
+// to combine reducers we just use the redux combineReducers function
+// searchRpbots and resuestRobots reducers
+const rootReducer = combineReducers ({
+      searchRobots,
+      reuestRobots
+});
+// then we use rootReducer in store
+const store = createStore(rootReducer,applyMiddleware(thunkMiddleware,logger));
 
+ 
 ReactDOM.render(
       <div>{/* 
           <Card id={robots[0].id} 

@@ -9,7 +9,7 @@ import './App.css';
 
 // import actions and reducers and connect 
 //  component that needs states
-import {setSearchField} from '../actions';
+import {setSearchField,reuestRobots} from '../actions';
 
 // we declare connect variabes
 const mapStateToProps = state => {
@@ -18,18 +18,27 @@ const mapStateToProps = state => {
         // store = createStore(searchRobots);
         // props used searchField
         // because we have one state property 
-        // we change  
-        // searchField : state.searchRobots.searchField
-        // to 
-        searchField : state.searchField
+        // searchField : state.searchField
+        // if theres is multiple reducers 
+        // we should define the exact reducer property
+        searchField : state.searchRobots.searchField,
+        robots : state.reuestRobots.robots,
+        isPending :state.reuestRobots.isPending,
+        isError : state.reuestRobots.isError
     }
 }
 
+// dispatch actions as properties
 const mapDispatchToProps = (dispatch)=> {
-    // props used onSearchChange
-    // event dispatch action of serachin a text input
-  return { onSearchChange : (event)=>dispatch(setSearchField(event.target.value))
-}
+    return { 
+           // props used onSearchChange
+           // event dispatch action of seraching a text input
+           onSearchChange : (event)=>dispatch(setSearchField(event.target.value)),
+           // redux-hunk expect as return of an action a function with a dispatch as a parameter
+           // in our case reuestRobots(dispatch)
+           // onReuestRobots :()=> reuestRobots(dispatch)
+           onReuestRobots :()=> dispatch(reuestRobots())
+        }
 }
 
 /*
@@ -37,8 +46,8 @@ const App =()=> {
          return ( you should always return one element 
                     we can grab all elemnts in one <div> 
                 <div>
-                    <h1>rofots friends </h1>
-                    <SearchBox/>
+                   <h1>rofots friends </h1>
+                   <SearchBox/>
                     <CardList robots = {robots}/>
                  </div>
          ) ;  
@@ -53,19 +62,19 @@ const state = {
 };*/
 class App extends Component {
     // we use state on constructor
-    constructor(){
-        // to use the Component parent  object
+  /*  constructor(){
+     to use the Component parent  object
         super()
         this.state = {
-            // initial value an empty array
+             initial value an empty array
             robots : [],
-            //robots: robots,
-            // we get searchField from mapStateToProps
-            //searchfield : ""
+            robots: robots,
+            we get searchField from mapStateToProps
+            searchfield : ""
         }
         console.log("constructor");
     }
-
+*/
 //  react hook componentDidMount() {}
 componentDidMount () {
   // the store values
@@ -75,17 +84,21 @@ componentDidMount () {
     // after component is mounted we can change the state of robots
     // we can fetch to make reuest for data from an API like this
     // get data as a JSON 
-
+/*
    fetch('https://jsonplaceholder.typicode.com/users')
         .then(response => response.json())
         .then(users => this.setState({robots :users} 
-            /* {}  render() will do <h1>Loading </h1>  */));
-        console.log(this.state);
+             {}  render() will do <h1>Loading </h1>  '));
+        console.log(this.state)
+*/
+     // can replace the fetch users call  by onReuestRobots passed as property
+    
+     this.props.onReuestRobots();
 
    // or locally like this 
    // we first import robots from robots.js then we change the state
    // this.setState({robots:robots});
-    console.log("componenDidMount");
+   // console.log("componenDidMount");
 }
 
     // create custom searchChange function
@@ -111,9 +124,12 @@ componentDidMount () {
         });*/
 
         // for readable code we can deconstruct the state 
-        const {robots/*,searchfield */}=this.state;
+        // const {robots/*,searchfield */}=this.state;
         // we get searchField an onSearchChange from props
-        const {searchField, onSearchChange} =this.props;
+        // we get robots from onReuestRobots
+        //  contains  { robots, isPending , isError }
+        const {searchField, onSearchChange,robots,isPending} =this.props;
+        console.log(robots);
         const filteredSearch =robots.filter(
             robot => {
                 return robot.name.toLowerCase().includes(searchField.toLowerCase());
@@ -134,8 +150,8 @@ componentDidMount () {
                  </div>  
         );
     }*/
-         return !robots.length ? 
-            <h1>Loading</h1> 
+         return isPending ? 
+               <h1>Loading</h1> 
             : <div className="tc">
                  <h1 className="f1">rofots friends </h1>
                     <SearchBox searchChange={/*this.*/onSearchChange}/>
