@@ -1,10 +1,36 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary'; 
 //import { robots } from './robots';
 import './App.css';
+
+// import actions and reducers and connect 
+//  component that needs states
+import {setSearchField} from '../actions';
+
+// we declare connect variabes
+const mapStateToProps = state => {
+    return  {
+        // we searchField state from index.js store reducer
+        // store = createStore(searchRobots);
+        // props used searchField
+        // because we have one state property 
+        // we change  
+        // searchField : state.searchRobots.searchField
+        // to 
+        searchField : state.searchField
+    }
+}
+
+const mapDispatchToProps = (dispatch)=> {
+    // props used onSearchChange
+    // event dispatch action of serachin a text input
+  return { onSearchChange : (event)=>dispatch(setSearchField(event.target.value))
+}
+}
 
 /*
 const App =()=> {
@@ -34,13 +60,18 @@ class App extends Component {
             // initial value an empty array
             robots : [],
             //robots: robots,
-            searchfield : ""
+            // we get searchField from mapStateToProps
+            //searchfield : ""
         }
         console.log("constructor");
     }
 
 //  react hook componentDidMount() {}
 componentDidMount () {
+  // the store values
+  //console.log(this.props.store.getState());
+
+
     // after component is mounted we can change the state of robots
     // we can fetch to make reuest for data from an API like this
     // get data as a JSON 
@@ -59,14 +90,16 @@ componentDidMount () {
 
     // create custom searchChange function
    // if you create your own function you just create it with an arrow function
-
+   
+   // now we get this method from mapdispatchToProps
+   /*
     onSearchChange= (event)=>{
         // result of text searched 
         this.setState({
             searchfield : event.target.value
         });
     }
-
+*/
 
     render () {
         // we can filter cards on reponse of searchfiled change
@@ -78,10 +111,12 @@ componentDidMount () {
         });*/
 
         // for readable code we can deconstruct the state 
-        const {robots,searchfield }=this.state;
+        const {robots/*,searchfield */}=this.state;
+        // we get searchField an onSearchChange from props
+        const {searchField, onSearchChange} =this.props;
         const filteredSearch =robots.filter(
             robot => {
-                return robot.name.toLowerCase().includes(searchfield.toLowerCase());
+                return robot.name.toLowerCase().includes(searchField.toLowerCase());
             });
         console.log("render");
         /*
@@ -103,7 +138,7 @@ componentDidMount () {
             <h1>Loading</h1> 
             : <div className="tc">
                  <h1 className="f1">rofots friends </h1>
-                    <SearchBox searchChange={this.onSearchChange}/>
+                    <SearchBox searchChange={/*this.*/onSearchChange}/>
                         <Scroll>
                            <ErrorBoundary>
                                <CardList robots = {filteredSearch}/>
@@ -114,4 +149,4 @@ componentDidMount () {
 }
 
 
-export default App;
+export default connect (mapStateToProps,mapDispatchToProps)(App);

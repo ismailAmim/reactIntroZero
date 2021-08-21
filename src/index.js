@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import {searchRobots} from './reducers';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
 //import Hello from './Hello'; 
@@ -9,8 +12,13 @@ import reportWebVitals from './reportWebVitals';
 // robot import is not default 
 //import CardList from "./CardList";
 import App from './containers/App';
-ReactDOM.render( <React.StrictMode >
-    <div>{/* 
+
+// create the redux store
+const store = createStore(searchRobots);
+
+
+ReactDOM.render(
+      <div>{/* 
           <Card id={robots[0].id} 
                 name ={robots[0].name}
                 email = {robots[0].email}
@@ -25,14 +33,15 @@ ReactDOM.render( <React.StrictMode >
 
           we can create  a cardlist parent of card components
           */}
-          {/*<CardList robots={robots}/>*/}
-          <App/>
+          {/*<CardList robots={robots}/>
+             assign the store state as a property
+          */}
+          <Provider  store={store}>
+               <App />
+          </Provider>
     </div>
 
-    {/* <App/> 
-    <Hello greeting={"hello"+" ninja react"}/>  
-    imported  Hello component tag 
-  */}</React.StrictMode>,
+    ,
     document.getElementById('root')
 );
 
